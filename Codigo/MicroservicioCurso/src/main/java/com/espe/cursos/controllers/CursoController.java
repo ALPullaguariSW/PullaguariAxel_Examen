@@ -1,7 +1,7 @@
 package com.espe.cursos.controllers;
 
 import com.espe.cursos.model.entities.Curso;
-import com.espe.cursos.model.Student;
+import com.espe.cursos.model.Material;
 import com.espe.cursos.services.CursoService;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/cursos")
-@CrossOrigin(origins = "http://localhost:5500")
+
 public class CursoController {
     @Autowired
     private CursoService service;
@@ -53,15 +53,15 @@ public class CursoController {
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<?> agregarUsuario(@RequestBody Student usuario, @PathVariable Long id) {
-        Optional<Student> optional;
+    public ResponseEntity<?> agregarMaterial(@RequestBody Material material, @PathVariable Long id) {
+        Optional<Material> optional;
         try {
-            optional = service.addUser(usuario, id);
+            optional = service.addUser(material, id);
 
 
         } catch (FeignException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Collections.singletonMap("error", "Usuario no encontrado"+ex.getMessage()));
+                    .body(Collections.singletonMap("error", "Material no encontrado"+ex.getMessage()));
         }
         if (optional.isPresent()) {
             return ResponseEntity.status(HttpStatus.CREATED).body(optional.get());

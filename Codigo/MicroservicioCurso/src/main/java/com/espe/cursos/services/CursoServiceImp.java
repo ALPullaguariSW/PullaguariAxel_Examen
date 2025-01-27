@@ -1,12 +1,13 @@
 package com.espe.cursos.services;
-import com.espe.cursos.clients.usuarioClientRest;
+import com.espe.cursos.clients.materialClientRest;
 import com.espe.cursos.model.entities.Curso;
-import com.espe.cursos.model.entities.CursoUsuario;
-import com.espe.cursos.model.Student;
+import com.espe.cursos.model.entities.CursoMaterial;
+import com.espe.cursos.model.Material;
 import com.espe.cursos.repositories.CursoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,20 +17,40 @@ public class CursoServiceImp implements CursoService {
     private CursoRepository cursoRepository;
     @Override
     public List<Curso> findAll() {
-        return (List<Curso>) cursoRepository.findAll();
+        List<Curso> cursos = (List<Curso>) cursoRepository.findAll();
+        for (Curso curso : cursos) {
+            // Llenar los materiales asociados
+            List<Material> materiales = new ArrayList<>();
+            for (CursoMaterial cursoMaterial : curso.getCursoMaterials()) {
+                Material material = materialClientRest.findById(cursoMaterial.getMaterialId());
+                materiales.add(material);
+            }
+            curso.setMaterial(materiales); // Asignar los materiales al curso
+        }
+        return cursos;
     }
 
+
     @Autowired
-    private usuarioClientRest clientRest;
+    private materialClientRest clientRest;
 
 
     @Override
     public Curso save(Curso curso) {
         return cursoRepository.save(curso);
     }
-    @Override
     public Optional<Curso> findById(Long id) {
-        return cursoRepository.findById(id);
+        Optional<Curso> cursoOptional = cursoRepository.findById(id);
+        if (cursoOptional.isPresent()) {
+            Curso curso = cursoOptional.get();
+            List<Material> materiales = new ArrayList<>();
+            for (CursoMaterial cursoMaterial : curso.getCursoMaterials()) {
+                Material material = materialClientRest.findById(cursoMaterial.getMaterialId());
+                materiales.add(material);
+            }
+            curso.setMaterial(materiales); // Asignar los materiales al curso
+        }
+        return cursoOptional;
     }
     @Override
     public void deleteById(Long id) {
@@ -38,19 +59,19 @@ public class CursoServiceImp implements CursoService {
 
 
     @Override
-    public Optional<Student> addUser(Student student, Long id) {
+    public Optional<Material> addUser(Material material, Long id) {
         Optional<Curso> optional = cursoRepository.findById(id);
         if (optional.isPresent()) {
-            Student usuarioTemp = clientRest.findById(student.getId());
+            Material materialTemp = materialClientRest.findById(material.getId());
 
             Curso curso = optional.get();
-            CursoUsuario cursoUsuario = new CursoUsuario();
+            CursoMaterial cursoMaterial = new CursoMaterial();
 
-            cursoUsuario.setUsuarioId(usuarioTemp.getId());
+            cursoMaterial.setMaterialId(materialTemp.getId());
 
-            curso.addCursoUsuario(cursoUsuario);
+            curso.addCursoMaterial(cursoMaterial);
             cursoRepository.save(curso);
-            return Optional.of(usuarioTemp);
+            return Optional.of(materialTemp);
 
         }
         return Optional.empty();

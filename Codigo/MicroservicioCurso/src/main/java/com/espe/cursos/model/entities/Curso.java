@@ -1,6 +1,6 @@
 package com.espe.cursos.model.entities;
 
-import com.espe.cursos.model.Student;
+import com.espe.cursos.model.Material;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,22 +34,23 @@ public class Curso {
 
     @OneToMany (cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "curso_id")
-    private List<CursoUsuario> cursoUsuarios;
+    private List<CursoMaterial> cursoMaterials;
 
     @Transient
-    private List<Student> usuarios;
+    private List<Material> material;
 
     public Curso(){
-        cursoUsuarios=new ArrayList<>();
-        usuarios=new ArrayList<>();
+        cursoMaterials =new ArrayList<>();
+        material=new ArrayList<>();
     }
 
-    public void addCursoUsuario(CursoUsuario cursoUsuario){
-        cursoUsuarios.add(cursoUsuario);
+
+    public void addCursoMaterial(CursoMaterial cursoMaterial){
+        cursoMaterials.add(cursoMaterial);
     }
 
-    public void removeCursoUsuario(CursoUsuario cursoUsuario){
-        cursoUsuarios.remove(cursoUsuario);
+    public void removeCursoMaterial(CursoMaterial cursoMaterial){
+        cursoMaterials.remove(cursoMaterial);
     }
 
 
@@ -92,5 +93,15 @@ public class Curso {
 
     public void setCreadoEn(LocalDateTime creadoEn) {
         this.creadoEn = creadoEn;
+    }
+
+
+
+    public List<Material> getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(List<Material> material) {
+        this.material = material;
     }
 }
