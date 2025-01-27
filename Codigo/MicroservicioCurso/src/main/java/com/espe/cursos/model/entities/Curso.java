@@ -95,7 +95,13 @@ public class Curso {
         this.creadoEn = creadoEn;
     }
 
+    public List<CursoMaterial> getCursoMaterials() {
+        return cursoMaterials;
+    }
 
+    public void setCursoMaterials(List<CursoMaterial> cursoMaterials) {
+        this.cursoMaterials = cursoMaterials;
+    }
 
     public List<Material> getMaterial() {
         return material;
